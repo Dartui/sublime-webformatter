@@ -1,7 +1,7 @@
 from .formatter import Formatter
 
 class PHPFormatter(Formatter):
-    executables = ['${folder}/vendor/bin/php-cs-fixer', '~/.composer/vendor/bin/php-cs-fixer']
+    executables = ['${folder}/vendor/bin/php-cs-fixer', '~/.config/composer/vendor/bin/php-cs-fixer', '~/.composer/vendor/bin/php-cs-fixer']
     config_filenames = ['.php-cs-fixer.php', '.php-cs-fixer.dist.php', '.php_cs', '.php_cs.dist']
     use_tempfile = True
 
