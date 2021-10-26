@@ -1,13 +1,13 @@
 from .formatter import Formatter
 
 class PHPFormatter(Formatter):
+    executables = ['${folder}/vendor/bin/php-cs-fixer', '~/.composer/vendor/bin/php-cs-fixer']
     config_filenames = ['.php-cs-fixer.php', '.php-cs-fixer.dist.php', '.php_cs', '.php_cs.dist']
     use_tempfile = True
 
     def get_cmd(self):
         cmd = []
 
-        cmd.append('${folder}/vendor/bin/php-cs-fixer')
         cmd.append('fix')
         cmd.append('${file}')
         cmd.append('--show-progress=none')

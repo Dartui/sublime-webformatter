@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from collections import Mapping, Sequence
 
+import shutil
 import subprocess
 import sublime
 import os
@@ -11,6 +12,7 @@ class Formatter:
 
     view = None
     use_tempfile = False
+    executables = []
     config_filenames = []
 
     _tempdir = None
@@ -29,8 +31,14 @@ class Formatter:
         if (self.use_tempfile == True):
             self.make_tempfile(code)
 
+        executable = self.executable()
+
+        if executable is None:
+            sublime.error_message('Could not find executable.')
+            raise Exception('Could not find executable.')
+
         cmd = self.get_cmd()
-        cmd = self.build_cmd(cmd)
+        cmd = executable + ' ' + self.build_cmd(cmd)
         cmd = self.substitute_variables(cmd, self.get_context())
 
         process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -105,6 +113,18 @@ class Formatter:
         file = open(self._tempfile, 'r')
 
         return file.read()
+
+    def executable(self):
+        if not self.executables:
+            return None
+
+        for executable in self.executables:
+            executable = self.substitute_variables(executable, self.get_context())
+
+            if shutil.which(executable) is not None:
+                return executable
+
+        return None
 
     def configuration_file(self):
         if not self.config_filenames:
